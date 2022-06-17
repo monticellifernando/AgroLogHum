@@ -93,7 +93,7 @@ int Evento=0;
 //int DeltaT = 1000; // 1s
 // 
 int Posicion=0;
-int MostrarCada = 60; // Esto es en minutos
+int MostrarCada = 60; // Esto es en segundos
 int UnaMedidaCada = 4; // Esto es en Segundos, Minutos u Horas, dependiendo de las unidades de tiempo de epera de abajo
 //#define Horas 3600;
 //#define Minutos 60;
@@ -111,8 +111,8 @@ struct Dato {
     int dia;
     int mes;
     int anio; 
-    float Humedad0;
-    float Humedad1;
+    int Humedad0;
+    int Humedad1;
 } ;
 
 DateTime HoraFecha;
@@ -128,6 +128,8 @@ bool stringComplete ;  // whether the string is complete
 bool ErrorFecha = true; // Si es cierto. Hay que poner la fecha!
 int FechaIdx = 0; // Este se usa para ParseFecha. Es la posición del entero que está guardando
                    
+Dato Lectura; // Aca voy a guardar los datos de fecha y huimedad y temperatura
+              //
                   
 // Funciones
 //

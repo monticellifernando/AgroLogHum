@@ -39,10 +39,18 @@ SCL = A5
 SDA = A4
 
 
+| SD Card | Arduino | 
+|  ----   | ---- |
+|   cs    |  10  |
+|  MOSI   |  11  |
+|  SCK    |  13  |
+|  MISO   |  12  |
+
+
  */
 
 // Para grabar en EEPROM
-#include <EEPROM.h>
+// #include <EEPROM.h>
 
 //Sensor de humedad
 // Codigo https://learn.adafruit.com/adafruit-aht20/arduino
@@ -56,6 +64,11 @@ SDA = A4
 // LCD stuff
 #include<LiquidCrystal.h>
 
+// SD card
+#include <SD.h>
+#include <SPI.h>
+
+int SD_ChipSelect = 10;
 
 // ============ Periféricos =============
 
@@ -74,11 +87,11 @@ Adafruit_AHTX0 aht;
 //const int d7 = 7; 
 
 // LCD
-LiquidCrystal lcd(2,3,4,5,6,7);
+// LiquidCrystal lcd(2,3,4,5,6,7);
 
 // ========= Variables y parámetros ============
 
-int MemoriaTotal = EEPROM.length();
+//int MemoriaTotal = EEPROM.length();
 
 // Mensajes de depurado
 bool m_debug = false;
@@ -131,15 +144,15 @@ int FechaIdx = 0; // Este se usa para ParseFecha. Es la posición del entero que
                   
 // Funciones
 //
-void DumpEEPROM();
+//void DumpEEPROM();
 bool EstaVacia(Dato Lectura); 
 
-void ReiniciarEEPROM(); // Borra el contenido de la EEPROM
+//void ReiniciarEEPROM(); // Borra el contenido de la EEPROM
 
 void MostrarDato(Dato Lectura); // Muestra el contenido de Lectura en el puerto serie
                                 
 
-void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
+// void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
 
 
 void ParseFecha(); // Interpreta la Fecha en formato Anio,Mes,dia,Hora,minuto para meter cada uno de esos campos dentro de NuevaFecha

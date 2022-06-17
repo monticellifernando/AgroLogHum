@@ -129,8 +129,8 @@ void loop() {
     // Decirle al sensor que tome los datos
     //aht.getEvent(&hum, &temp);
 
-    float Humedad0 = analogRead(A0);
-    float Humedad1 = analogRead(A1);
+    int Humedad0 = analogRead(A0);
+    int Humedad1 = analogRead(A1);
 
 
 
@@ -141,7 +141,6 @@ void loop() {
     // }
     HoraFecha = rtc.now(); //obtenemos la hora y fecha actual
 
-    Dato Lectura; // Aca voy a guardar los datos de fecha y huimedad y temperatura
 
     segundo=HoraFecha.second(); // No lo pongo en dato para que no me llene la EEPROM
     Lectura.Humedad0 = Humedad0;
@@ -158,26 +157,8 @@ void loop() {
 
 
 
-    if (Evento%MostrarCada == 0) { 
-        MostrarDato(Lectura);
-        //Serial.print(String(Lectura.anio));
-        //Serial.print("/");
-        //Serial.print(String(Lectura.mes));
-        //Serial.print("/");
-        //Serial.print(String(Lectura.dia));
-        //Serial.print(" ");
-        //Serial.print(String(Lectura.hora));
-        //Serial.print(":");
-        //Serial.print(String(Lectura.minuto));
-        //Serial.print(":");
-        //Serial.print(String(segundo));
-        //Serial.print(",");
-        //Serial.print(Lectura.Temperatura);
-        //Serial.print(",");
-        //Serial.println(Lectura.Humedad);
-    }
 
-    if (Evento%(MostrarCada/10) == 0) { 
+    //if (Evento%(MostrarCada/10) == 0) { 
         // if (m_debug){
         //     Serial.println("Actualizando lcd:");
         // }
@@ -209,7 +190,7 @@ void loop() {
         lcd.print(" ");
         lcd.print(Lectura.Humedad1);
         lcd.print(" ");
-    }
+    //}
 
     // Primero chequeamos que no tengamos una medición hecha en el futuro:
     Dato LecturaAnterior;
@@ -334,7 +315,7 @@ void GrabarDatoEnEEPROM(Dato Lectura){
     lcd.setCursor(0, 0);
     lcd.print("Grabando:");
 
-    MostrarDato(Lectura);
+    //MostrarDato(Lectura);
 
 }
 
@@ -409,12 +390,13 @@ bool RtcPowerLost(){
 void PrintHelp(){
     Serial.println("Acá tengo que mostrar los comandos posibles:");
     //Serial.println("============================================");
-    Serial.println("Fecha <Año>,<Mes>,<Día>,<Hora>,<Minuto>,<Segundo> -> Pone la fecha");
-    Serial.println("Log    -> muestra datos de la memoria");
-    Serial.println("Borrar    -> Borra la memoria");
+    Serial.println("F <Año>,<Mes>,<Día>,<Hora>,<Minuto>,<Segundo> -> Pone la fecha");
+    Serial.println("M    -> Muestra datos de la memoria");
+    Serial.println("B    -> Borra la memoria");
+    Serial.println("L    -> Hace una lectura");
 //    Serial.println("Debug   -> Muestra en pantalla un montón de giladas para depurar el programa");
-    Serial.println("CadaHoras <Horas> -> Graba cada <Horas> horas");
-//    Serial.println("CadaMinutos <Minutos> -> Graba en memoria una medida cada <Minutos> minutos");
+    Serial.println("CH <Horas> -> Graba cada <Horas> horas");
+//    Serial.println("CM <Minutos> -> Graba en memoria una medida cada <Minutos> minutos");
     Serial.println();
     // 
 
@@ -475,7 +457,7 @@ int Interpret(){
             Serial.print("Debug = Sí");
             delay(1000);
         }
-    }else if (Command == "Fecha" ){
+    }else if (Command == "F" ){
         // La fecha tiene que ser del modo
         // Año,mes,dia,hora,min,seg
 
@@ -497,7 +479,7 @@ int Interpret(){
         ErrorFecha = false;
         FechaIdx=0;
 
-    }else if( Command == "Log"){
+    }else if( Command == "M"){
         // Arrancar con la posición actual +1 (que es el dato más viejo) e imprimirlos a todos
         int TotalDatos = MemoriaTotal / sizeof(Dato)  ;
         if (m_debug){
@@ -505,13 +487,13 @@ int Interpret(){
             Serial.print( sizeof(Dato) );
             Serial.print("Datos en EEPROM = ");
             Serial.println( TotalDatos );
-            Serial.print("EEPROM[0] = ");
-            Serial.println( EEPROM[0] );
-
-            Serial.print("EEPROM[1] = ");
-            Serial.println( EEPROM[1] );
 
         }
+        Serial.print("EEPROM[0] = ");
+        Serial.println( EEPROM[0] );
+
+        Serial.print("EEPROM[1] = ");
+        Serial.println( EEPROM[1] );
         int m_posicion=EEPROM[0];
         Serial.println("#Fecha,Humedad0,Humedad1");
         for (unsigned int i=0; i<TotalDatos; i++){
@@ -532,10 +514,10 @@ int Interpret(){
             }
 
         }
-    } else if(Command == "Borrar") {
+    } else if(Command == "B") {
         Serial.println("Borrando la EEPROM");
         ReiniciarEEPROM();
-    }else if (Command == "CadaHoras"){
+    }else if (Command == "CH"){
         int m_horas = Valor.toInt();
         if (m_horas <=0){
             Serial.print("Mmmm no entendi cada cuantas horas querés que guarde los datos: \" ");
@@ -548,7 +530,7 @@ int Interpret(){
             UnidadTiempoDeEspera = 3600;
 
         }
-    } else if (Command == "CadaMinutos"){
+    } else if (Command == "CM"){
         int m_minutos = Valor.toInt();
         if (m_minutos <=0){
             Serial.print("Mmmm no entendi cada cuantos minutos querés que guarde los datos: \" ");
@@ -561,6 +543,9 @@ int Interpret(){
             UnidadTiempoDeEspera = 60;
         }
 
+    } else if (Command == "L") {
+        // Hace una lectura y la muestra por el puerto serie
+        MostrarDato(Lectura);
     } else {
         Resultado = 1;
     }
