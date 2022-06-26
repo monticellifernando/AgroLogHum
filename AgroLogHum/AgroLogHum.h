@@ -49,8 +49,10 @@ SDA = A4
 
  */
 
+
+
 // Para grabar en EEPROM
-// #include <EEPROM.h>
+//#include <EEPROM.h>
 
 //Sensor de humedad
 // Codigo https://learn.adafruit.com/adafruit-aht20/arduino
@@ -61,12 +63,16 @@ SDA = A4
 #include <Wire.h>
 #include "RTClib.h"
 
-// LCD stuff
+// // LCD stuff
 #include<LiquidCrystal.h>
 
 // SD card
-#include <SD.h>
-#include <SPI.h>
+// This is using smaller library Fat16:
+// https://github.com/greiman/Fat16
+#include <Fat16.h>
+//#include <Fat16util.h> 
+SdCard SD;
+Fat16 file;
 
 int SD_ChipSelect = 10;
 
@@ -87,14 +93,15 @@ Adafruit_AHTX0 aht;
 //const int d7 = 7; 
 
 // LCD
-// LiquidCrystal lcd(2,3,4,5,6,7);
+LiquidCrystal lcd(2,3,4,5,6,7);
 
 // ========= Variables y parámetros ============
 
 //int MemoriaTotal = EEPROM.length();
 
 // Mensajes de depurado
-bool m_debug = false;
+#define DEBUG  0
+//bool m_debug = false;
 
 // Si recién me desperté
 //bool JustWokeUp = true;
@@ -128,6 +135,7 @@ struct Dato {
     float Temperatura;
 } ;
 
+int TamanoDato = 0;
 DateTime HoraFecha;
 
 
@@ -152,14 +160,14 @@ bool EstaVacia(Dato Lectura);
 void MostrarDato(Dato Lectura); // Muestra el contenido de Lectura en el puerto serie
                                 
 
-// void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
+//void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
 
 
 void ParseFecha(); // Interpreta la Fecha en formato Anio,Mes,dia,Hora,minuto para meter cada uno de esos campos dentro de NuevaFecha
 
 int ValorHastaComa(); // Devuelve el entero que está hasta la siguiente coma
 
-bool RtcPowerLost() ; // HAck para checkear si el reloj está seteado o no
+//bool RtcPowerLost() ; // HAck para checkear si el reloj está seteado o no
 
 void PrintHelp(); // Muestra mensaje de ayuda en el terminal serie
                   

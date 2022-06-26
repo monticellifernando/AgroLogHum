@@ -1,0 +1,3 @@
+[submodule "AgroLogHum/Fat16"]
+	path = AgroLogHum/Fat16
+	url = git@github.com:greiman/Fat16.git

@@ -28,14 +28,15 @@ void setup()                    // run once, when the sketch starts
 
     Serial.begin(115200);           // set up Serial library at 115200 bps
     Serial.println("Setting up...");
+    //TamanoDato = sizeof(Dato);
     //ReiniciarEEPROM(); //<--- Hack para reiniciar la EEPROM
 
-    //if (Serial) Serial.println("LCD...");
-    //if (Serial) Serial.println("LCD clear...");
-    //lcd.clear();
-    //if (Serial) Serial.println("LCD begin...");
-    //lcd.begin(16, 2);
-    //if (Serial) Serial.println("LCD print...");
+    //Serial.println("LCD...");
+    //Serial.println("LCD clear...");
+    lcd.clear();
+    //Serial.println("LCD begin...");
+    lcd.begin(16, 2);
+    //Serial.println("LCD print...");
     //lcd.print("Setup...");
     //lcd.setCursor(0, 1);
     // //lcd.print(MemoriaTotal);
@@ -45,12 +46,12 @@ void setup()                    // run once, when the sketch starts
     //lcd.clear();
     //lcd.print("Iniciando reloj");
 
-    Serial.println("Inicializando Reloj...");
+    //Serial.println("Reloj...");
     //Inicializamos el RTC
     if (!rtc.begin()){
-        //lcd.clear();
-        //lcd.print("Error de reloj");
-        Serial.println("ERROR:: Reloj no conectado! O error leyendo el reloj...");
+        lcd.clear();
+        lcd.print("Error de reloj");
+        Serial.println("ERROR::Reloj!");
         while(1){
             delay(1000);
         }
@@ -60,13 +61,13 @@ void setup()                    // run once, when the sketch starts
     delay(100);
 
     // Inicializar el sensor de temperatura
-    Serial.println("Inicializando sensor...");
+    //Serial.println("Sensor...");
     //lcd.print("Iniciando sensor");
 
     if (!aht.begin()){
-        //lcd.clear();
-        //lcd.print("Error de sensor");
-        if (Serial) Serial.println("ERROR:: sensor no conectado! O error leyendo el sensor...");
+        lcd.clear();
+        lcd.print("Error de sensor");
+        Serial.println("ERROR::sensor!");
         while(1){
           delay(1000);
         }
@@ -75,11 +76,11 @@ void setup()                    // run once, when the sketch starts
     //lcd.print("Sensor OK");
     delay(100);
 
-    //// Inicialización de tarjeta SD:
+    // Inicialización de tarjeta SD:
     while (!SD.begin(SD_ChipSelect)){
-        //lcd.clear();
-        //lcd.print("No SD!");
-        Serial.println("SD ERROR");
+        lcd.clear();
+        lcd.print("No SD!");
+        Serial.println("ERROR::SD");
         delay(5000);
     }
     //lcd.clear();
@@ -97,14 +98,14 @@ void setup()                    // run once, when the sketch starts
 
     //lcd.clear();
     //lcd.print("hora?");
-    Serial.println("Revisando reloj:");
-    if (RtcPowerLost()) {
-        //lcd.setCursor(0, 1);
-        //lcd.print("ERROR FECHA");
-        Serial.println("Pone la fecha:");
-        //delay(500);
+    //Serial.println("Revisando reloj:");
+    // if (RtcPowerLost()) {
+    //     //lcd.setCursor(0, 1);
+    //     //lcd.print("ERROR FECHA");
+    //     Serial.println("Error fecha:");
+    //     //delay(500);
 
-    }
+    // }
 
     //Serial.println("#t,Temp,Hum");  // prints hello with ending line break 
 
@@ -112,9 +113,6 @@ void setup()                    // run once, when the sketch starts
 
 void loop() {
 
-    //if(m_debug){
-    //    Serial.println("Loop()");
-    //}
 
     // Puerto Serie
     if (stringComplete){
@@ -123,10 +121,6 @@ void loop() {
         String Value = "";
         ReadInput();
 
-        // if (m_debug){
-        //     Serial.println("Comando "+Command);
-        //     Serial.println("Valor "+String(Value));
-        // }
         int Result = Interpret();
         if (Result>0){
             Serial.println("No entendi eso :-P ");
@@ -210,60 +204,46 @@ void loop() {
     }
 
     if (Evento%(MostrarCada/10) == 0) { 
-        // if (m_debug){
-        //     Serial.println("Actualizando //lcd:");
-        // }
 
-        //lcd.clear();
-        //lcd.begin(16, 2);
-        //lcd.setCursor(0, 0);
+        lcd.clear();
+        lcd.begin(16, 2);
+        lcd.setCursor(0, 0);
 
         // if(ErrorFecha){
         //     //lcd.print("Error Fecha");
         // } else {
 
-        //     //lcd.print(String(Lectura.dia));
-        //     //lcd.print("/");
-        //     //lcd.print(String(Lectura.mes));
-        //     //lcd.print(" ");
-        //     if (Lectura.hora<10) //lcd.print("0");
-        //     //lcd.print(String(Lectura.hora));
-        //     //lcd.print(":");
-        //     if (Lectura.minuto<10) //lcd.print("0");
-        //     //lcd.print(String(Lectura.minuto));
-        //     //lcd.print(":");
-        //     if (segundo<10) //lcd.print("0");
-        //     //lcd.print(String(segundo));
+        lcd.print(String(Lectura.dia));
+        lcd.print("/");
+        lcd.print(String(Lectura.mes));
+        lcd.print(" ");
+        if (Lectura.hora<10) lcd.print("0");
+        lcd.print(String(Lectura.hora));
+        lcd.print(":");
+        if (Lectura.minuto<10) lcd.print("0");
+        lcd.print(String(Lectura.minuto));
+        lcd.print(":");
+        if (segundo<10) lcd.print("0");
+        lcd.print(String(segundo));
         // }
 
-        //lcd.setCursor(0, 1);
-        //lcd.print(Lectura.Temperatura);
-        //lcd.print("C ");
-        //lcd.print(Lectura.Humedad);
-        //lcd.print("% ");
+        lcd.setCursor(0, 1);
+        lcd.print(Lectura.Temperatura);
+        lcd.print("C ");
+        lcd.print(Lectura.Humedad);
+        lcd.print("% ");
     }
 
     // Primero chequeamos que no tengamos una medición hecha en el futuro:
-    Dato LecturaAnterior;
-    //EEPROM.get(2+Posicion*sizeof(Dato), LecturaAnterior);
-    DateTime EstaMedida(Lectura.anio, Lectura.mes, Lectura.dia, Lectura.hora, Lectura.minuto, segundo);
-    //DateTime UltimaMedidaGuardada(EEPROM[2+Posicion*sizeof(Dato)], EEPROM[2+Posicion*sizeof(Dato)+1], EEPROM[2+Posicion*sizeof(Dato)+2], EEPROM[2+Posicion*sizeof(Dato)+3], EEPROM[2+Posicion*sizeof(Dato)+4], 0); 
-    DateTime MedidaAnterior(LecturaAnterior.anio, LecturaAnterior.mes, LecturaAnterior.dia, LecturaAnterior.hora, LecturaAnterior.minuto, segundo);
-    // if (m_debug){
-    //     Serial.println("Esta Medida:");
-    //     MostrarDato(Lectura);
-    //     Serial.print("Ultima Medida Guardada, Posicion ");
+    //Dato LecturaAnterior;
 
-    //     Serial.println(Posicion);
-    //     MostrarDato(LecturaAnterior);
-    // }
+    //EEPROM.get(2+Posicion*TamanoDato, LecturaAnterior);
+    //DateTime EstaMedida(Lectura.anio, Lectura.mes, Lectura.dia, Lectura.hora, Lectura.minuto, segundo);
+    //DateTime UltimaMedidaGuardada(EEPROM[2+Posicion*TamanoDato], EEPROM[2+Posicion*TamanoDato+1], EEPROM[2+Posicion*TamanoDato+2], EEPROM[2+Posicion*TamanoDato+3], EEPROM[2+Posicion*TamanoDato+4], 0); 
+    //DateTime MedidaAnterior(LecturaAnterior.anio, LecturaAnterior.mes, LecturaAnterior.dia, LecturaAnterior.hora, LecturaAnterior.minuto, segundo);
 
-    TimeSpan Diff = EstaMedida - MedidaAnterior  ;
+    //TimeSpan Diff = EstaMedida - MedidaAnterior  ;
 
-    // if (m_debug){
-    //     Serial.print("Sec Diff= ");
-    //     Serial.println(Diff.totalseconds());
-    // }
 
     //ErrorFecha = false;
 
@@ -355,14 +335,14 @@ void MostrarDato(Dato Lectura){
 //     // Primero aumento el valor de la posición. Voy a escribir en el SIGUIENTE bloque
 //     Posicion = EEPROM[0]+1;
 //     // si la posición que se quiere grabar es mayor a 50, entonces la pone en 0
-//     if (2+Posicion*sizeof(Dato)>MemoriaTotal){
+//     if (2+Posicion*TamanoDato>MemoriaTotal){
 //         Posicion=0;
 //     }
 //     EEPROM[0] = Posicion;
 //     Serial.println(Posicion);
 // 
 // 
-//     EEPROM.put(2+Posicion*sizeof(Dato), Lectura);
+//     EEPROM.put(2+Posicion*TamanoDato, Lectura);
 //     //lcd.setCursor(0, 0);
 //     //lcd.print("Grabando:");
 // 
@@ -379,14 +359,10 @@ int ValorHastaComa(){
     //if(m_debug) Serial.print("idx = ");
     //if(m_debug) Serial.println(idx);
     if (idx>0){
-        // if(m_debug) Serial.print("Valor Leido = ");
         String v_res = Valor.substring(0,idx);
         String ValorNuevo = Valor.substring(idx+1);
         Valor = ValorNuevo;
-        // if(m_debug) Serial.println(v_res);
         resultado = v_res.toInt();
-        // if(m_debug) Serial.println(resultado);
-        // if(m_debug) Serial.println("Valor = "+Valor);
     } else {
         Serial.println("Algo esta mal:");
         Serial.println(Valor);
@@ -420,21 +396,21 @@ int ValorHastaComa(){
 //    }
 //}
 
-bool RtcPowerLost(){
-
-    segundo=rtc.now().second();
-
-    // Esperamos 2 segundos. Si los segundos siguen dando igual, entonces se perdió la energía)
-    delay(1100);
-
-    ErrorFecha = false;
-    if (segundo - rtc.now().second() == 0) {
-        //rtc.adjust(DateTime(2022,3,16,7,4));
-        ErrorFecha = true;
-    } 
-    return(ErrorFecha);
-
-}
+// bool RtcPowerLost(){
+// 
+//     segundo=rtc.now().second();
+// 
+//     // Esperamos 2 segundos. Si los segundos siguen dando igual, entonces se perdió la energía)
+//     delay(1100);
+// 
+//     ErrorFecha = false;
+//     if (segundo - rtc.now().second() == 0) {
+//         //rtc.adjust(DateTime(2022,3,16,7,4));
+//         ErrorFecha = true;
+//     } 
+//     return(ErrorFecha);
+// 
+// }
 
 
 
@@ -469,9 +445,9 @@ void ReadInput(){
 }
 
 void serialEvent() {
-    if (m_debug){
+#if DEBUG
         Serial.println("serialEvent()");
-    }
+#endif
     while (Serial.available()) {
         // get the new byte:
         char inChar = (char)Serial.read();
@@ -496,18 +472,19 @@ int Interpret(){
     int Resultado = 0;
 
 
-    if (Command=="Debug"){
-        // Switch Debug Flag
-        if (m_debug){
-            m_debug=false;
-            Serial.print("Debug = NO");
-            delay(1000);
-        } else {
-            m_debug=true;
-            Serial.print("Debug = Sí");
-            delay(1000);
-        }
-    }else if (Command == "Fecha" ){
+    //if (Command=="Debug"){
+    //    // Switch Debug Flag
+    //    if (m_debug){
+    //        m_debug=false;
+    //        Serial.print("Debug = NO");
+    //        delay(1000);
+    //    } else {
+    //        m_debug=true;
+    //        Serial.print("Debug = Sí");
+    //        delay(1000);
+    //    }
+    //}else 
+    if (Command == "Fecha" ){
         // La fecha tiene que ser del modo
         // Año,mes,dia,hora,min,seg
 
@@ -529,70 +506,69 @@ int Interpret(){
         ErrorFecha = false;
         FechaIdx=0;
 
-    //}else if( Command == "Log"){
-    //    // Arrancar con la posición actual +1 (que es el dato más viejo) e imprimirlos a todos
-    //    int TotalDatos = MemoriaTotal / sizeof(Dato)  ;
-    //    if (m_debug){
-    //        //Serial.print("sizeof(Dato) = ");
-    //        //Serial.print( sizeof(Dato) );
-    //        //Serial.print("Datos en EEPROM = ");
-    //        //Serial.println( TotalDatos );
-    //        Serial.print("EEPROM[0] = ");
-    //        Serial.println( EEPROM[0] );
+    }else if( Command == "Log"){
+        // Arrancar con la posición actual +1 (que es el dato más viejo) e imprimirlos a todos
+        //int TotalDatos = MemoriaTotal / TamanoDato  ;
+#if DEBUG
+            //Serial.print("TamanoDato = ");
+            //Serial.print( TamanoDato );
+            //Serial.print("Datos en EEPROM = ");
+            //Serial.println( TotalDatos );
+            Serial.print("EEPROM[0] = ");
+            //Serial.println( EEPROM[0] );
 
-    //        Serial.print("EEPROM[1] = ");
-    //        Serial.println( EEPROM[1] );
+            Serial.print("EEPROM[1] = ");
+            //Serial.println( EEPROM[1] );
+#endif
+        //int m_posicion=EEPROM[0];
+        Serial.println("#Fecha,Temperatura,Humedad");
+//        for (unsigned int i=0; i<TotalDatos; i++){
+//            m_posicion ++;
+//            if (m_posicion > TotalDatos){
+//                m_posicion -= TotalDatos;
+//            }
+//            Dato m_DatoEprom;
+//            EEPROM.get(2+m_posicion*TamanoDato, m_DatoEprom);
+//            if (!EstaVacia(m_DatoEprom)){
+//#if DEBUG
+//                    Serial.print(i);
+//                    Serial.print(" ");
+//                    Serial.print(m_posicion);
+//                    Serial.print(" ");
+//#endif
+//                MostrarDato(m_DatoEprom);
+//            }
+//
+//        }
+     } else if(Command == "Borrar") {
+         Serial.println("Borrando la EEPROM");
+         //ReiniciarEEPROM();
+     }else if (Command == "CadaHoras"){
+         int m_horas = Valor.toInt();
+         if (m_horas <=0){
+             Serial.print("Mmmm no entendi cada cuantas horas querés que guarde los datos: \" ");
+             Serial.print(Valor);
+             Serial.println("\"");
+             Resultado=1;
+         } else {
+             UnaMedidaCada = m_horas;
+             //EEPROM[1] = UnaMedidaCada;
+             UnidadTiempoDeEspera = 3600;
 
-    //    }
-    //    int m_posicion=EEPROM[0];
-    //    Serial.println("#Fecha,Temperatura,Humedad");
-    //    for (unsigned int i=0; i<TotalDatos; i++){
-    //        m_posicion ++;
-    //        if (m_posicion > TotalDatos){
-    //            m_posicion -= TotalDatos;
-    //        }
-    //        Dato m_DatoEprom;
-    //        EEPROM.get(2+m_posicion*sizeof(Dato), m_DatoEprom);
-    //        if (!EstaVacia(m_DatoEprom)){
-    //            if (m_debug){
-    //                Serial.print(i);
-    //                Serial.print(" ");
-    //                Serial.print(m_posicion);
-    //                Serial.print(" ");
-    //            }
-    //            MostrarDato(m_DatoEprom);
-    //        }
-
-    //    }
-    // } else if(Command == "Borrar") {
-    //     Serial.println("Borrando la EEPROM");
-    //     ReiniciarEEPROM();
-    // }else if (Command == "CadaHoras"){
-    //     int m_horas = Valor.toInt();
-    //     if (m_horas <=0){
-    //         Serial.print("Mmmm no entendi cada cuantas horas querés que guarde los datos: \" ");
-    //         Serial.print(Valor);
-    //         Serial.println("\"");
-    //         Resultado=1;
-    //     } else {
-    //         UnaMedidaCada = m_horas;
-    //         EEPROM[1] = UnaMedidaCada;
-    //         UnidadTiempoDeEspera = 3600;
-
-    //     }
-    // } else if (Command == "CadaMinutos"){
-    //     int m_minutos = Valor.toInt();
-    //     if (m_minutos <=0){
-    //         Serial.print("Mmmm no entendi cada cuantos minutos querés que guarde los datos: \" ");
-    //         Serial.print(Valor);
-    //         Serial.println("\"");
-    //         Resultado=1;
-    //     } else {
-    //         UnaMedidaCada = m_minutos;
-    //         EEPROM[1] = UnaMedidaCada;
-    //         UnidadTiempoDeEspera = 60;
-    //     }
-    // 
+         }
+     } else if (Command == "CadaMinutos"){
+         int m_minutos = Valor.toInt();
+         if (m_minutos <=0){
+             Serial.print("Mmmm no entendi cada cuantos minutos querés que guarde los datos: \" ");
+             Serial.print(Valor);
+             Serial.println("\"");
+             Resultado=1;
+         } else {
+             UnaMedidaCada = m_minutos;
+             //EEPROM[1] = UnaMedidaCada;
+             UnidadTiempoDeEspera = 60;
+         }
+     
     } else {
         Resultado = 1;
     }
