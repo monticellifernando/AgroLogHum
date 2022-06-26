@@ -109,9 +109,9 @@ void setup()                    // run once, when the sketch starts
 
 void loop() {
 
-    //if(m_debug){
-    //    Serial.println("Loop()");
-    //}
+#ifdef DEBUG
+        Serial.println("Loop()");
+#endif
 
     // Puerto Serie
     if (stringComplete){
@@ -120,10 +120,10 @@ void loop() {
         String Value = "";
         ReadInput();
 
-        // if (m_debug){
-        //     Serial.println("Comando "+Command);
-        //     Serial.println("Valor "+String(Value));
-        // }
+#ifdef DEBUG
+             Serial.println("Comando "+Command);
+             Serial.println("Valor "+String(Value));
+#endif
         int Result = Interpret();
         if (Result>0){
             Serial.println("No entendi eso :-P ");
@@ -165,9 +165,9 @@ void loop() {
 
 
     // Chequeamos la hora
-    // if (m_debug){
-    //     Serial.println("Levantando la fecha");
-    // }
+#ifdef DEBUG
+         Serial.println("Levantando la fecha");
+#endif
     HoraFecha = rtc.now(); //obtenemos la hora y fecha actual
 
 
@@ -227,14 +227,15 @@ void loop() {
     DateTime EstaMedida(Lectura.anio, Lectura.mes, Lectura.dia, Lectura.hora, Lectura.minuto, segundo);
     //DateTime UltimaMedidaGuardada(EEPROM[2+Posicion*TamanoDato], EEPROM[2+Posicion*TamanoDato+1], EEPROM[2+Posicion*TamanoDato+2], EEPROM[2+Posicion*TamanoDato+3], EEPROM[2+Posicion*TamanoDato+4], 0); 
     DateTime MedidaAnterior(LecturaAnterior.anio, LecturaAnterior.mes, LecturaAnterior.dia, LecturaAnterior.hora, LecturaAnterior.minuto, segundo);
-    // if (m_debug){
-    //     Serial.println("Esta Medida:");
-    //     MostrarDato(Lectura);
-    //     Serial.print("Ultima Medida Guardada, Posicion ");
 
-    //     Serial.println(Posicion);
-    //     MostrarDato(LecturaAnterior);
-    // }
+#ifdef DEBUG
+         Serial.println("Esta Medida:");
+         MostrarDato(Lectura);
+         Serial.print("Ultima Medida Guardada, Posicion ");
+
+         Serial.println(Posicion);
+         MostrarDato(LecturaAnterior);
+#endif
 
     TimeSpan Diff = EstaMedida - MedidaAnterior  ;
 
@@ -253,11 +254,6 @@ void loop() {
 
     delay(1000);
     Evento+=1;
-    // if(m_debug){
-    //     Serial.println();
-    // }
-
-//    JustWokeUp = false;
 }
 
 bool EstaVacia(Dato Lectura){
@@ -362,32 +358,6 @@ int ValorHastaComa(){
     return(resultado);
 }
 
-//void ParseFecha(String Valor){
-//    //if (m_debug){
-//        Serial.print("Parse Fecha, FechaIdx = ");
-//        Serial.println(FechaIdx);
-//    //}
-//    if (FechaIdx >= 5){
-//        FechaIdx=0;
-//        Serial.println("Return PareseFecha");
-//        return;
-//    }
-//
-//    int idx = Valor.indexOf(",");
-//    Serial.print("idx = ");
-//    Serial.println(idx);
-//    if (idx>0){
-//        Serial.print("NuevaFecha[FechaIdx] = ");
-//        Serial.println(NuevaFecha[FechaIdx]);
-//        NuevaFecha[FechaIdx] = Valor.substring(0,idx).toInt();
-//        Serial.print("valor = ");
-//        Serial.println(Valor);
-//        Valor = Valor.substring(idx+1);
-//        FechaIdx++;
-//        ParseFecha(Valor);
-//    }
-//}
-
 bool RtcPowerLost(){
 
     segundo=rtc.now().second();
@@ -422,19 +392,17 @@ void PrintHelp(){
 }
 void ReadInput(){ 
     int idx = InputString.indexOf(" ");
-    // if (m_debug){
-    //     Serial.println("ReadInput = "+InputString);
-    //     Serial.println(" idx  = "+String(idx));
-    // }
 
 
     Command = InputString.substring(0,idx);
     Valor = InputString.substring(idx+1);
 
-    // if (m_debug){
-    //     Serial.println(" Command = " + Command);
-    //     Serial.println(" arg  = " + Valor);
-    // }
+#ifdef DEBUG
+    Serial.println("ReadInput = "+InputString);
+    Serial.println(" idx  = "+String(idx));
+    Serial.println(" Command = " + Command);
+    Serial.println(" arg  = " + Valor);
+#endif
 }
 
 void serialEvent() {
@@ -529,12 +497,12 @@ int Interpret(){
             Dato m_DatoEprom;
             EEPROM.get(2+m_posicion*TamanoDato, m_DatoEprom);
             if (!EstaVacia(m_DatoEprom)){
-                if (m_debug){
+#if DEBUG
                     Serial.print(i);
                     Serial.print(" ");
                     Serial.print(m_posicion);
                     Serial.print(" ");
-                }
+#endif
                 MostrarDato(m_DatoEprom);
             }
 

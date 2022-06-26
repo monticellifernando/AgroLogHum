@@ -98,7 +98,7 @@ int MemoriaTotal = EEPROM.length();
 
 int TamanoDato = 50;
 // Mensajes de depurado
-bool m_debug = false;
+#define DEBUG false
 
 // Si recién me desperté
 //bool JustWokeUp = true;
