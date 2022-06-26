@@ -39,7 +39,17 @@ SCL = A5
 SDA = A4
 
 
+| SD Card | Arduino |
+|  ----   | ---- |
+|   cs    |  10  |
+|  MOSI   |  11  |
+|  SCK    |  13  |
+|  MISO   |  12  |
+
+
  */
+
+#define _ID_ "AgroLogHumSD"
 
 // Para grabar en EEPROM
 #include <EEPROM.h>
@@ -56,6 +66,12 @@ SDA = A4
 // LCD stuff
 #include<LiquidCrystal.h>
 
+
+// SD card
+#include <Fat16.h>
+SdCard SD;
+Fat16 file;
+int SD_ChipSelect = 10;
 
 // ============ Periféricos =============
 
@@ -80,6 +96,7 @@ LiquidCrystal lcd(2,3,4,5,6,7);
 
 int MemoriaTotal = EEPROM.length();
 
+int TamanoDato = 50;
 // Mensajes de depurado
 bool m_debug = false;
 
@@ -118,6 +135,7 @@ struct Dato {
 DateTime HoraFecha;
 
 
+Dato Lectura; // Aca voy a guardar los datos de fecha y huimedad y temperatura
 
 // Para leer comandos del terminal serie
 String InputString = "";         // a String to hold incoming data
