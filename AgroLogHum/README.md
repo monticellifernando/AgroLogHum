@@ -1,4 +1,4 @@
-# AgroLegHum v1.0
+# AgroLegHum v2.0
 
 ## Hardware:
 
@@ -27,8 +27,46 @@
 | SCL | SCL | A5 |
 | SDA | SDA | A4 |
 
+| SDCard | Arduino |
+| ---    | ---     |
+| CS     | D10     |
+| MOSI   | D11     |
+| MISO   | D12     |
+| SCK    | D13     |
 
 
 ![Arduino pinout](arduino-nano-pins.png "Pinout de arduino")
+
+
+## Comandos
+
+El dispositivo se comanda desde el puerto serie, via usb a 115200 baud. Los comandos permiten configurar el dispositivo y operarlo. 
+| Comando | Argumento                                   | Detalle                                                                             |
+| ------  | ------                                      | -----                                                                               |
+| B       |                                             | Borra el archivo con todos los registros.                                           |
+| CH      | <Horas>                                     | Graba cada <Horas> horas en el archivo de registro                                  |
+| F       | <Año>,<Mes>,<Día>,<Hora>,<Minuto>,<Segundo> | Pone fecha en el dispositivo                                                        |
+| G       |                                             | Hace una enrada en el archivo de registro con la fecha y las mediciones del momento |
+| L       |                                             | Muestra los datos registrados en el archivo de registro                             |
+
+Si el comando ingresado es incorrecto, el programa va a mosrar un mensaje de ayuda comentando cuales son los comandos posibles.
+
+```
+No entendi eso :-P
+Comandos posibles:
+B -> Borra la memoria
+CH <Horas> -> Graba cada <Horas> horas
+F <Año>,<Mes>,<Día>,<Hora>,<Minuto>,<Segundo> -> Pone fecha
+G -> Graba datos
+L -> muestra datos
+```
+
+Algunos comandos tienen argumentos y otros no. 
+Los argumentos de los comandos se envían en la misma línea, separados por un espacio. Por ejemplo, para poner la fecha:
+
+    F 2022,6,24,18,3,10
+    
+Pone la fecha en 24 de junio de 2022 a las 18:03:10. Si el comando fecha `F` es enviado sin argumentos, el dispositivo muestra la fecha actual con el estado de la medición de Humedad y Temperatura
+
 
 
