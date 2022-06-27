@@ -44,8 +44,8 @@ El dispositivo se comanda desde el puerto serie, via usb a 115200 baud. Los coma
 | Comando | Argumento                                   | Detalle                                                                             |
 | ------  | ------                                      | -----                                                                               |
 | B       |                                             | Borra el archivo con todos los registros.                                           |
-| CH      | <Horas>                                     | Graba cada <Horas> horas en el archivo de registro                                  |
-| F       | <Año>,<Mes>,<Día>,<Hora>,<Minuto>,<Segundo> | Pone fecha en el dispositivo                                                        |
+| CH      | Horas                                       | Graba cada <Horas> horas en el archivo de registro                                  |
+| F       | Año,Mes,Día,Hora,Minuto,Segundo             | Pone fecha en el dispositivo                                                        |
 | G       |                                             | Hace una enrada en el archivo de registro con la fecha y las mediciones del momento |
 | L       |                                             | Muestra los datos registrados en el archivo de registro                             |
 
