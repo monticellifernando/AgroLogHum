@@ -1,4 +1,4 @@
-# AgroLegHum v2.0
+# AgroLogHum v2.0
 
 ## Hardware:
 
