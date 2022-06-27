@@ -48,9 +48,13 @@ SDA = A4
 
 
  */
+#include "MinimumSerial.h"
+MinimumSerial MinSerial;
+//#define Serial MinSerial
 
 #define _ID_ "AgroLogHumSD"
 
+#include <Stream.h>
 // Para grabar en EEPROM
 #include <EEPROM.h>
 
@@ -68,10 +72,19 @@ SDA = A4
 
 
 // SD card
-#include <Fat16.h>
-SdCard SD;
-Fat16 file;
-int SD_ChipSelect = 10;
+//#include <SPI.h>
+#include <SdFat.h>
+#include "sdios.h"
+
+SdFat SD;
+File file;
+char Archivo[] = "AGROLOG.LOG";
+
+#define error(s) SD.errorHalt(&MinSerial, F(s))
+
+#define SD_FAT_TYPE 1
+
+unsigned int SD_ChipSelect = 10;
 
 // ============ Periféricos =============
 
@@ -123,6 +136,7 @@ int UnidadTiempoDeEspera = 3600;
 
 int segundo;
 struct Dato {
+    int segundo;
     int minuto;
     int hora;
     int dia;
@@ -144,8 +158,6 @@ String Command, Valor; // Donde vamos a guardar la interpretacion del comando
 bool stringComplete ;  // whether the string is complete
 
 bool ErrorFecha = true; // Si es cierto. Hay que poner la fecha!
-int FechaIdx = 0; // Este se usa para ParseFecha. Es la posición del entero que está guardando
-                   
                   
 // Funciones
 //
@@ -154,13 +166,13 @@ bool EstaVacia(Dato Lectura);
 
 void ReiniciarEEPROM(); // Borra el contenido de la EEPROM
 
-void MostrarDato(Dato Lectura); // Muestra el contenido de Lectura en el puerto serie
+String MostrarDato(Dato Lectura); // Muestra el contenido de Lectura en el puerto serie
                                 
 
-void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
+//void GrabarDatoEnEEPROM(Dato Lectura); // Graba el contenido de Lectura en la próxima posición de memoria de la EEPROM
+void GrabarDatoEnSD(); // Graba el contenido de Lectura Como entrada nueva en Archivo
 
 
-void ParseFecha(); // Interpreta la Fecha en formato Anio,Mes,dia,Hora,minuto para meter cada uno de esos campos dentro de NuevaFecha
 
 int ValorHastaComa(); // Devuelve el entero que está hasta la siguiente coma
 
@@ -175,3 +187,11 @@ void ReadInput(); // Lee la entrada de la terminal serie. Y la prepara para inte
 void serialEvent(); // Función de evento serie para interpretar la entrada del puerto serie
 
 int Interpret(); // Interpreta Commando Valor y hace algo al respecto, dependiendo del comando
+
+void CheckSD(); // Revisa que se pueda tener acceso al SD
+
+void ls(); // Muestra el contenido de la tarjeta SD
+           
+void Log();
+
+Dato LeerDeArchivo();
