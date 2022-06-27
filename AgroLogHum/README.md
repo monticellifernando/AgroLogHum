@@ -35,7 +35,7 @@
 | SCK    | D13     |
 
 
-![Arduino pinout](arduino-nano-pins.png "Pinout de arduino")
+![Arduino pinout](aduino-pinout-nano.png "Pinout de arduino")
 
 
 ## Comandos
